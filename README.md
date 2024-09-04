@@ -31,7 +31,7 @@ This project serves as an excellent example of:
 - Building interactive TUIs with Go
 - Implementing classic algorithms in a visual, engaging manner
 - Structuring an application using the Bubble Tea framework
-- Balancing simplicity and functionality in software design
+- Having fun using an enjoyable framework
 
 ## Getting Started
 
