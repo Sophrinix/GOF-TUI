@@ -65,7 +65,7 @@ func (m model) View() string {
 	for i := 0; i < height; i++ {
 		for j := 0; j < width; j++ {
 			if m.grid[i][j].alive {
-				b.WriteString(lipgloss.NewStyle().Foreground(lipgloss.Color("#FFFFFF")).Background(lipgloss.Color("#008000")).Render("  "))
+				b.WriteString(lipgloss.NewStyle().Foreground(lipgloss.Color("#212829")).Background(lipgloss.Color("#3b7ed2")).Render("  "))
 			} else {
 				b.WriteString("  ")
 			}
