@@ -57,7 +57,7 @@ You can create a GIF or video of the Game of Life TUI in action using [VHS](http
 2. Run the following command in your terminal:
 
    ```
-   vhs  -o vhs/gof-tui.gif  vhs/gof-tui.tape
+   vhs  -o vhs/gol-tui.gif  vhs/gol-tui.tape
    ```
 ## Conclusion
 

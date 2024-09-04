@@ -1,4 +1,4 @@
-module goftea
+module goltea
 
 go 1.22.2
 
