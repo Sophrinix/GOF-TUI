@@ -1,6 +1,6 @@
 # Game of Life TUI
 
-![Game of Life TUI Demo](vhs/game-of-life.gif)
+![Game of Life TUI Demo](vhs/gof-tui.gif)
 
 This project is an exploration of building a Text User Interface (TUI) using the Bubble Tea framework, applied to the well-understood problem of Conway's Game of Life.
 
