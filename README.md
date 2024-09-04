@@ -1,6 +1,7 @@
 # Game of Life TUI
 
 This project is an exploration of building a Text User Interface (TUI) using the Bubble Tea framework, applied to the well-understood problem of Conway's Game of Life.
+![Game of Life TUI Demo](vhs/gof-tui.gif)
 
 ## Overview
 
@@ -13,7 +14,6 @@ The Game of Life, devised by mathematician John Conway, is a cellular automaton 
 - **Interactive Controls**: Toggle the simulation on/off and quit the application with simple key commands.
 - **Colorful Display**: Uses [lipgloss](https://github.com/charmbracelet/lipgloss) for styling, making the game board visually distinct and easy to read.
 
-![Game of Life TUI Demo](vhs/gof-tui.gif)
 
 ## How It Works
 
