@@ -78,19 +78,22 @@ func (m model) View() string {
 }
 
 func nextGeneration(grid [][]cell) [][]cell {
+	height := len(grid)
+	width := len(grid[0])
 	newGrid := make([][]cell, height)
-	for i := range newGrid {
+	for i := 0; i < height; i++ {
 		newGrid[i] = make([]cell, width)
 	}
-	for x := 0; x < height; x++ {
-		for y := 0; y < width; y++ {
-			liveNeighbors := countAliveNeighbors(grid, x, y)
-			if grid[x][y].alive && (liveNeighbors == 2 || liveNeighbors == 3) {
-				newGrid[x][y] = cell{alive: true}
-			} else if !grid[x][y].alive && liveNeighbors == 3 {
-				newGrid[x][y] = cell{alive: true}
+
+	for i := 0; i < height; i++ {
+		for j := 0; j < width; j++ {
+			aliveNeighbors := countAliveNeighbors(grid, i, j)
+			if grid[i][j].alive && (aliveNeighbors == 2 || aliveNeighbors == 3) {
+				newGrid[i][j] = cell{alive: true}
+			} else if !grid[i][j].alive && aliveNeighbors == 3 {
+				newGrid[i][j] = cell{alive: true}
 			} else {
-				newGrid[x][y] = cell{alive: false}
+				newGrid[i][j] = cell{alive: false}
 			}
 		}
 	}
@@ -98,17 +101,20 @@ func nextGeneration(grid [][]cell) [][]cell {
 }
 
 func countAliveNeighbors(grid [][]cell, x, y int) int {
-	count := 0
+	height := len(grid)
+	width := len(grid[0])
+	aliveCount := 0
+
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
-			if !(i == 0 && j == 0) && isValidCoordinate(x+i, y+j) {
+			if !(i == 0 && j == 0) && x+i >= 0 && x+i < height && y+j >= 0 && y+j < width {
 				if grid[x+i][y+j].alive {
-					count++
+					aliveCount++
 				}
 			}
 		}
 	}
-	return count
+	return aliveCount
 }
 
 func isValidCoordinate(x, y int) bool {
