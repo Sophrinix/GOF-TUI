@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math/rand"
 	"strings"
@@ -11,10 +12,7 @@ import (
 )
 
 // Constants for the game
-const (
-	width  = 40
-	height = 25
-)
+var width, height int
 
 type cell struct {
 	alive bool
@@ -107,13 +105,23 @@ func countAliveNeighbors(grid [][]cell, x, y int) int {
 
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
-			if !(i == 0 && j == 0) && x+i >= 0 && x+i < height && y+j >= 0 && y+j < width {
-				if grid[x+i][y+j].alive {
+			// Skip the current cell itself
+			if i == 0 && j == 0 {
+				continue
+			}
+
+			// Neighbor's coordinates
+			neighborX, neighborY := x+i, y+j
+
+			// Only count neighbors within bounds of the grid
+			if neighborX >= 0 && neighborX < height && neighborY >= 0 && neighborY < width {
+				if grid[neighborX][neighborY].alive {
 					aliveCount++
 				}
 			}
 		}
 	}
+
 	return aliveCount
 }
 
@@ -131,8 +139,19 @@ func tickCmd() tea.Cmd {
 }
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
+	// Command-line flags for width, height, and seed input
+	flag.IntVar(&width, "width", 40, "width of the grid")
+	flag.IntVar(&height, "height", 25, "height of the grid")
+	var seed int64
+	flag.Int64Var(&seed, "seed", time.Now().UnixNano(), "seed for random generation")
 
+	// Parse the command-line flags
+	flag.Parse()
+
+	// Set the random seed
+	rand.Seed(seed)
+
+	// Create and start the Bubble Tea program
 	p := tea.NewProgram(initialModel(), tea.WithAltScreen())
 
 	if err := p.Start(); err != nil {
