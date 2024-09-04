@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"math/rand"
+	"os"
 	"strings"
 	"time"
 
@@ -11,8 +13,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// Constants for the game
 var width, height int
+var inputFile string
 
 type cell struct {
 	alive bool
@@ -23,17 +25,62 @@ type model struct {
 	running bool
 }
 
-func initialModel() model {
-	m := model{
-		grid: make([][]cell, height),
+func readInputFile(filename string) ([][]cell, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
 	}
-	for i := 0; i < height; i++ {
-		m.grid[i] = make([]cell, width)
-		for j := 0; j < width; j++ {
-			m.grid[i][j].alive = rand.Intn(2) == 1
+	defer file.Close()
+
+	var grid [][]cell
+	scanner := bufio.NewScanner(file)
+	lineNum := 0
+	for scanner.Scan() {
+		line := scanner.Text()
+		if lineNum == 0 {
+			width = len(line)
+		} else if len(line) != width {
+			return nil, fmt.Errorf("line %d has length %d, expected %d", lineNum+1, len(line), width)
+		}
+		row := make([]cell, width)
+		for i, char := range line {
+			row[i] = cell{alive: char == '*' || char == '1'}
+		}
+		grid = append(grid, row)
+		lineNum++
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	height = len(grid)
+	return grid, nil
+}
+
+func initialModel() model {
+	var grid [][]cell
+	var err error
+
+	if inputFile != "" {
+		grid, err = readInputFile(inputFile)
+		if err != nil {
+			fmt.Printf("Error reading input file: %v\n", err)
+			os.Exit(1)
+		}
+	} else {
+		grid = make([][]cell, height)
+		for i := 0; i < height; i++ {
+			grid[i] = make([]cell, width)
+			for j := 0; j < width; j++ {
+				grid[i][j].alive = rand.Intn(2) == 1
+			}
 		}
 	}
-	return m
+
+	return model{
+		grid: grid,
+	}
 }
 
 func (m model) Init() tea.Cmd {
@@ -76,13 +123,10 @@ func (m model) View() string {
 }
 
 func nextGeneration(grid [][]cell) [][]cell {
-	height := len(grid)
-	width := len(grid[0])
 	newGrid := make([][]cell, height)
 	for i := 0; i < height; i++ {
 		newGrid[i] = make([]cell, width)
 	}
-
 	for i := 0; i < height; i++ {
 		for j := 0; j < width; j++ {
 			aliveNeighbors := countAliveNeighbors(grid, i, j)
@@ -99,21 +143,13 @@ func nextGeneration(grid [][]cell) [][]cell {
 }
 
 func countAliveNeighbors(grid [][]cell, x, y int) int {
-	height := len(grid)
-	width := len(grid[0])
 	aliveCount := 0
-
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
-			// Skip the current cell itself
 			if i == 0 && j == 0 {
 				continue
 			}
-
-			// Neighbor's coordinates
 			neighborX, neighborY := x+i, y+j
-
-			// Only count neighbors within bounds of the grid
 			if neighborX >= 0 && neighborX < height && neighborY >= 0 && neighborY < width {
 				if grid[neighborX][neighborY].alive {
 					aliveCount++
@@ -121,12 +157,7 @@ func countAliveNeighbors(grid [][]cell, x, y int) int {
 			}
 		}
 	}
-
 	return aliveCount
-}
-
-func isValidCoordinate(x, y int) bool {
-	return x >= 0 && x < height && y >= 0 && y < width
 }
 
 type tickMsg struct{}
@@ -139,21 +170,16 @@ func tickCmd() tea.Cmd {
 }
 
 func main() {
-	// Command-line flags for width, height, and seed input
-	flag.IntVar(&width, "width", 40, "width of the grid")
-	flag.IntVar(&height, "height", 25, "height of the grid")
+	flag.IntVar(&width, "width", 40, "width of the grid (default 40, ignored if input file is provided)")
+	flag.IntVar(&height, "height", 25, "height of the grid (default 25, ignored if input file is provided)")
+	flag.StringVar(&inputFile, "input", "", "path to input file for initial state")
 	var seed int64
 	flag.Int64Var(&seed, "seed", time.Now().UnixNano(), "seed for random generation")
-
-	// Parse the command-line flags
 	flag.Parse()
 
-	// Set the random seed
 	rand.Seed(seed)
 
-	// Create and start the Bubble Tea program
 	p := tea.NewProgram(initialModel(), tea.WithAltScreen())
-
 	if err := p.Start(); err != nil {
 		fmt.Printf("Error running program: %v", err)
 	}

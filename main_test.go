@@ -1,6 +1,8 @@
 package main
 
 import (
+	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -10,9 +12,9 @@ func setGridDimensions(w, h int) {
 }
 
 func TestInitialModel(t *testing.T) {
-	// Set width and height for the test
+	// Test random initialization
 	setGridDimensions(5, 5)
-
+	inputFile = ""
 	m := initialModel()
 
 	// Check if the grid has the correct dimensions
@@ -35,22 +37,65 @@ func TestInitialModel(t *testing.T) {
 	}
 }
 
-func TestNextGeneration(t *testing.T) {
-	// Set width and height for the test grid to match the test input size
-	setGridDimensions(3, 3)
+func TestInitialModelFromFile(t *testing.T) {
+	// Create a temporary input file
+	content := []byte("*..\n.*.\n..*\n")
+	tmpfile, err := ioutil.TempFile("", "test_input")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(tmpfile.Name())
 
+	if _, err := tmpfile.Write(content); err != nil {
+		t.Fatal(err)
+	}
+	if err := tmpfile.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	// Set the input file and initialize the model
+	inputFile = tmpfile.Name()
+	m := initialModel()
+
+	// Check dimensions
+	expectedHeight, expectedWidth := 3, 3
+	if len(m.grid) != expectedHeight {
+		t.Errorf("Expected grid height to be %d, got %d", expectedHeight, len(m.grid))
+	}
+	for i := 0; i < expectedHeight; i++ {
+		if len(m.grid[i]) != expectedWidth {
+			t.Errorf("Expected grid width to be %d, got %d", expectedWidth, len(m.grid[i]))
+		}
+	}
+
+	// Check cell states
+	expectedGrid := [][]bool{
+		{true, false, false},
+		{false, true, false},
+		{false, false, true},
+	}
+
+	for i := 0; i < expectedHeight; i++ {
+		for j := 0; j < expectedWidth; j++ {
+			if m.grid[i][j].alive != expectedGrid[i][j] {
+				t.Errorf("Expected grid[%d][%d] to be %v, got %v", i, j, expectedGrid[i][j], m.grid[i][j].alive)
+			}
+		}
+	}
+}
+
+func TestNextGeneration(t *testing.T) {
+	setGridDimensions(3, 3)
 	input := [][]cell{
 		{{alive: false}, {alive: true}, {alive: false}},
 		{{alive: true}, {alive: true}, {alive: false}},
 		{{alive: false}, {alive: false}, {alive: true}},
 	}
-
 	expected := [][]cell{
 		{{alive: true}, {alive: true}, {alive: false}},
 		{{alive: true}, {alive: true}, {alive: true}},
 		{{alive: false}, {alive: true}, {alive: false}},
 	}
-
 	result := nextGeneration(input)
 	for i := 0; i < len(expected); i++ {
 		for j := 0; j < len(expected[i]); j++ {
@@ -88,9 +133,8 @@ func TestCountAliveNeighbors(t *testing.T) {
 func TestCustomGridSize(t *testing.T) {
 	// Test with a custom grid size
 	setGridDimensions(10, 10)
-
+	inputFile = "" // Ensure we're not using an input file
 	m := initialModel()
-
 	if len(m.grid) != 10 {
 		t.Errorf("Expected grid height to be 10, got %d", len(m.grid))
 	}
