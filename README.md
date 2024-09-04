@@ -24,14 +24,6 @@ The application combines the simplicity of the Game of Life rules with the power
 3. **User Interface**: Bubble Tea handles the rendering and user input, creating a responsive TUI.
 4. **Game Logic**: The core Game of Life rules are implemented in the `nextGeneration` function.
 
-## Learning Outcomes
-
-This project serves as an excellent example of:
-
-- Building interactive TUIs with Go
-- Implementing classic algorithms in a visual, engaging manner
-- Structuring an application using the Bubble Tea framework
-- Having fun using an enjoyable framework
 
 ## Getting Started
 
