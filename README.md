@@ -2,8 +2,6 @@
 ![Game of Life TUI Demo](vhs/gol-logo.gif)
 This project is an exploration of building a Text User Interface (TUI) using the Bubble Tea framework, applied to the well-understood problem of Conway's Game of Life.
 
-![Game of Life TUI Demo](vhs/gol-tui.gif)
-
 ## Overview
 
 The Game of Life, devised by mathematician John Conway, is a cellular automaton simulation that demonstrates how complex patterns can emerge from simple rules. This implementation brings the classic simulation to life in your terminal using Go and the Bubble Tea framework.
@@ -44,6 +42,7 @@ There are several ways to run the program:
    go run main.go
    ```
    This will create a 40x25 grid with random initial state.
+   ![Game of Life TUI Demo](vhs/gol-tui.gif)
 
 2. **Custom Grid Size**:
    ```
