@@ -97,6 +97,14 @@ You can create a GIF or video of the Game of Life TUI in action using [VHS](http
    vhs -o vhs/gol-tui.gif vhs/gol-tui.tape
    ```
 
+## Eventual goal.
+We intend to implement many of the patterns found on https://conwaylife.com.
+Feel free to send pull requests.
+
+## Awesome Resources:
+[Conway Life Book](https://conwaylife.com/book)
+[LifeWiki](https://conwaylife.com/wiki)
+
 ## Conclusion
 
 This project demonstrates how a well-understood problem like the Game of Life can be reimagined as an interactive terminal application using modern Go libraries. It serves as both a learning tool and a starting point for more complex TUI applications.

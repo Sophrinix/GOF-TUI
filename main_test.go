@@ -37,9 +37,64 @@ func TestInitialModel(t *testing.T) {
 	}
 }
 
+func TestInitialModelFromFileWithComments(t *testing.T) {
+	// Create a temporary input file with comments and empty lines
+	content := []byte(`
+! This is a comment
+*..*
+! Another comment
+
+.*.*
+! Final comment
+..*.
+`)
+	tmpfile, err := ioutil.TempFile("", "test_input")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(tmpfile.Name())
+
+	if _, err := tmpfile.Write(content); err != nil {
+		t.Fatal(err)
+	}
+	if err := tmpfile.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	// Set the input file and initialize the model
+	inputFile = tmpfile.Name()
+	m := initialModel()
+
+	// Check dimensions
+	expectedHeight, expectedWidth := 3, 4
+	if len(m.grid) != expectedHeight {
+		t.Errorf("Expected grid height to be %d, got %d", expectedHeight, len(m.grid))
+	}
+	for i := 0; i < expectedHeight; i++ {
+		if len(m.grid[i]) != expectedWidth {
+			t.Errorf("Expected grid width to be %d, got %d", expectedWidth, len(m.grid[i]))
+		}
+	}
+
+	// Check cell states
+	expectedGrid := [][]bool{
+		{true, false, false, true},
+		{false, true, false, true},
+		{false, false, true, false},
+	}
+
+	for i := 0; i < expectedHeight; i++ {
+		for j := 0; j < expectedWidth; j++ {
+			if m.grid[i][j].alive != expectedGrid[i][j] {
+				t.Errorf("Expected grid[%d][%d] to be %v, got %v", i, j, expectedGrid[i][j], m.grid[i][j].alive)
+			}
+		}
+	}
+}
+
 func TestInitialModelFromFile(t *testing.T) {
-	// Create a temporary input file
-	content := []byte("*..\n.*.\n..*\n")
+	// Create a temporary input file with a comment and an empty line
+	content := []byte("! This is a comment\n*..\n\n.*.\n..*\n")
 	tmpfile, err := ioutil.TempFile("", "test_input")
 	if err != nil {
 		t.Fatal(err)
