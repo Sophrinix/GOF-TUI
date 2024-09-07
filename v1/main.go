@@ -37,11 +37,19 @@ func readInputFile(filename string) ([][]cell, error) {
 	lineNum := 0
 	for scanner.Scan() {
 		line := scanner.Text()
+		line = strings.TrimSpace(line)
+
+		// Skip empty lines and comments
+		if line == "" || strings.HasPrefix(line, "!") {
+			continue
+		}
+
 		if lineNum == 0 {
 			width = len(line)
 		} else if len(line) != width {
 			return nil, fmt.Errorf("line %d has length %d, expected %d", lineNum+1, len(line), width)
 		}
+
 		row := make([]cell, width)
 		for i, char := range line {
 			row[i] = cell{alive: char == '*' || char == '1'}
