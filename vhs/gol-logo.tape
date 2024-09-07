@@ -1,9 +1,9 @@
 # Set up the terminal
 Set Shell "bash"
-Set FontSize 16
+Set FontSize 18
 Set Width 2400
-Set Height 600
-Set TypingSpeed 80ms
+Set Height 500
+Set TypingSpeed 20ms
 
 # Run the Game of Life
 Type "go run main.go -input examples/gol/gol.gol"
